@@ -54,6 +54,9 @@ export default class Particle {
     }
 
     stop() {
+        // Because we start animation with delay, animation may not be inited, but can be stopped manually;
+        if (!this.animationMovement) return;
+
         this.animationMovement.pause();
     }
 

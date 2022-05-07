@@ -44,10 +44,13 @@ $bgGradientHover: (
   width: var(--width);
   height: calc(var(--width) / var(--ratio));
   position: relative;
+  z-index: 1;
   box-shadow: #000 0 0 0 2px;
+  border-radius: var(--bg-border-radius);
   font-family: var(--font-family);
 
-  &:hover {
+  &:hover,
+  &.-active- {
     --border-color: #282921;
 
     .menu-item--bg {
@@ -64,7 +67,7 @@ $bgGradientHover: (
 
     .menu-item--glare {
       &:after {
-        animation: glare .2s ease-in-out;
+        animation: glare .1s ease-in-out;
       }
     }
   }

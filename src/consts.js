@@ -1,3 +1,7 @@
+import dash from "./img/divine-dash.png";
+import flourish from "./img/divine-flourish.png";
+import athenasAid from "./img/athenas-aid.png";
+
 export const NS = 'http://www.w3.org/2000/svg';
 
 export const BORDER_COLORS = {
@@ -35,3 +39,27 @@ export const BORDER_COLORS = {
         {color: '#89F226', start: .95},
     ]
 }
+
+export const BOONS = [
+    {
+        title: 'Divine Dash',
+        img: dash,
+        description: 'Your <strong>Dash</strong>  deals damage and can <strong>Deflect</strong>.',
+        bonus: 'Dash Damage',
+        bonusAmount: '10'
+    },
+    {
+        title: 'Divine Flourish',
+        img: flourish,
+        description: 'Your <strong>Special</strong> is stronger, and can <strong>Deflect</strong>.',
+        bonus: 'Special Damage',
+        bonusAmount: '+60%'
+    },
+    {
+        title: 'Athena\'s Aid',
+        img: athenasAid,
+        description: 'Your <strong>Call</strong> briefly makes you  <strong>Invulnerable</strong> and  <strong>Deflect</strong> all attacks.',
+        bonus: 'Special Damage',
+        bonusAmount: '+60%'
+    }
+]

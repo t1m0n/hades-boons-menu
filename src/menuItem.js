@@ -7,13 +7,14 @@ const defaults = {
     borderRadius: 20,
     borderOffset: 2,
     particlesMaxRadius: 10,
-    particlesAnimationStartDelay: 100,
+    particlesAnimationStartDelay: 300,
     content: {}
 }
 
 class MenuItem {
     constructor(el, opts) {
-        this.$el = document.querySelector(el);
+        this.$el = el;
+        this.$el.classList.add('menu-item');
         this.opts = {...defaults, ...opts};
         this.borderTransform = this.opts.borderBlurSize * 2 + this.opts.particlesMaxRadius / 2;
 
@@ -84,6 +85,16 @@ class MenuItem {
 
         this.width = width + lineWidth * 2 + borderOffset * 2;
         this.height = height + lineWidth * 2 + borderOffset * 2;
+    }
+
+    activate = () => {
+        this.$el.classList.add('-active-');
+        this.particles.startAnimation();
+    }
+
+    deactivate = () => {
+        this.$el.classList.remove('-active-');
+        this.particles.stopAnimation();
     }
 
     drawBorder() {

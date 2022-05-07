@@ -3,5 +3,9 @@
    ------------------------------------------------- */
 
 .menu {
-
+  display: grid;
+  grid-template-rows: repeat(3, max-content);
+  align-items: center;
+  justify-content: center;
+  grid-row-gap: 18px;
 }
