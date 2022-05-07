@@ -1,8 +1,11 @@
+import Particles from './particles';
+
 const defaults = {
     lineWidth: 3,
     borderBlurSize: 1,
     borderRadius: 20,
     borderOffset: 2,
+    particlesMaxRadius: 10,
     content: {}
 }
 
@@ -50,6 +53,7 @@ class MenuItem {
         this.$el = document.querySelector(el);
 
         this.opts = {...defaults, ...opts};
+        this.borderTransform = this.opts.borderBlurSize * 2 + this.opts.particlesMaxRadius / 2;
         this.init();
     }
 
@@ -60,25 +64,31 @@ class MenuItem {
         this.makeBorderGradient();
         this.drawBorder();
         this.render();
+
+        new Particles(this.$particlesPath, {
+            particleTransform: this.borderTransform
+        })
     }
 
     createCanvas() {
         const svg = document.createElementNS(ns, 'svg');
+        const $particlesPath = document.createElementNS(ns, 'path');
         const gradientDefs = document.createElementNS(ns, 'defs');
         const innerBorder = document.createElement('div');
         const content = document.createElement('div');
         const shine = document.createElement('div');
         const bg = document.createElement('div');
         const glare = document.createElement('div');
-        const {lineWidth, borderBlurSize, borderOffset} = this.opts;
+        const {lineWidth, borderBlurSize, particlesMaxRadius, borderOffset} = this.opts;
         const blurSizeTwice = borderBlurSize * 2 * 2;
 
         svg.classList.add('menu-item--border');
         svg.style.setProperty('--line-width', `${lineWidth}px`);
         svg.style.setProperty('--blur-size', `${borderBlurSize}px`);
         svg.style.setProperty('--border-offset', `${borderOffset}px`);
-        svg.setAttribute('width', this.width + blurSizeTwice);
-        svg.setAttribute('height', this.height + blurSizeTwice);
+        svg.style.setProperty('--particles-max-radius', `${particlesMaxRadius}px`);
+        svg.setAttribute('width', this.width + blurSizeTwice + particlesMaxRadius);
+        svg.setAttribute('height', this.height + blurSizeTwice + particlesMaxRadius);
 
         innerBorder.classList.add('menu-item--inner-border');
         content.classList.add('menu-item--content');
@@ -99,74 +109,79 @@ class MenuItem {
         this.$innerBorder = innerBorder;
         this.$content = content;
         this.gradientDefs = gradientDefs;
+        this.$particlesPath = $particlesPath;
     }
 
     computeDims() {
         const {width, height} = this.$el.getBoundingClientRect();
         const {borderOffset, lineWidth} = this.opts;
         const styles = getComputedStyle(this.$el)
-        const parentBorderWidth = parseInt(styles.borderWidth)
 
-        // this.width = width;
-        // this.height = height;
         this.width = width + lineWidth * 2 + borderOffset * 2;
         this.height = height + lineWidth * 2 + borderOffset * 2;
-        // this.width = width + parentBorderWidth + borderOffset * 2;
-        // this.height = height + parentBorderWidth + borderOffset * 2;
     }
 
     drawBorder() {
         const {width, height} = this;
-        const {lineWidth, borderBlurSize, borderRadius} = this.opts;
+        const {lineWidth, borderBlurSize, borderRadius, particlesMaxRadius} = this.opts;
 
         const topBorder = document.createElementNS(ns, 'path');
         const rightBorder = document.createElementNS(ns, 'path');
         const bottomBorder = document.createElementNS(ns, 'path');
         const leftBorder = document.createElementNS(ns, 'path');
+        const {$particlesPath} = this;
 
-        const borders = [topBorder, rightBorder, bottomBorder, leftBorder];
+        const borders = [topBorder, rightBorder, bottomBorder, leftBorder, $particlesPath];
 
         const y1 = lineWidth / 2;
         const y2 = height - lineWidth / 2;
         const x1 = lineWidth / 2;
         const x2 = width - lineWidth / 2;
         const offset = borderRadius;
-        const pathX2 = width - offset;
-        const pathY2 = height - offset;
+        const offsetX2 = width - offset;
+        const offsetY2 = height - offset;
 
         this.svg.appendChild(topBorder);
         this.svg.appendChild(rightBorder);
         this.svg.appendChild(bottomBorder);
         this.svg.appendChild(leftBorder);
+        this.svg.appendChild($particlesPath);
 
         topBorder.setAttribute('d', `
         M ${offset},${y1}
-        L ${pathX2},${y1}
+        L ${offsetX2},${y1}
         `)
         topBorder.setAttribute('stroke', 'url(#borderTopGradient)')
 
         rightBorder.setAttribute('d', `
-            M ${pathX2}, ${y1}
-            Q ${x2} ${y1} ${x2} ${offset} L ${x2},${pathY2} Q ${x2} ${y2} ${pathX2} ${y2}
+            M ${offsetX2}, ${y1}
+            Q ${x2} ${y1} ${x2} ${offset} L ${x2},${offsetY2} Q ${x2} ${y2} ${offsetX2} ${y2}
         `)
         rightBorder.setAttribute('stroke', 'url(#borderRightGradient)')
 
         leftBorder.setAttribute('d', `
             M ${offset}, ${y1}
-            Q ${x1} ${y1} ${x1} ${offset} L ${x1},${pathY2} Q ${x1} ${y2} ${offset} ${y2}
+            Q ${x1} ${y1} ${x1} ${offset} L ${x1},${offsetY2} Q ${x1} ${y2} ${offset} ${y2}
         `)
         leftBorder.setAttribute('stroke', 'url(#borderLeftGradient)')
 
         bottomBorder.setAttribute('d', `
         M ${offset},${y2}
-        L ${pathX2},${y2}
+        L ${offsetX2},${y2}
         `)
         bottomBorder.setAttribute('stroke', 'url(#borderBottomGradient)')
 
         borders.forEach(border => {
             border.setAttribute('filter', 'url(#border-blur)')
-            border.setAttribute('transform', `translate(${borderBlurSize * 2}, ${borderBlurSize * 2})`)
+            border.setAttribute('transform', `translate(${this.borderTransform}, ${this.borderTransform})`)
         })
+
+        $particlesPath.setAttribute('d', `
+        M ${offset},${y1} L ${offsetX2},${y1}
+        Q ${x2} ${y1} ${x2} ${offset} L ${x2},${offsetY2} Q ${x2} ${y2} ${offsetX2} ${y2}
+        L ${offset},${y2}
+        Q ${x1} ${y2} ${x1} ${offsetY2} L ${x1} ${offset} Q ${y1} ${x1} ${offset} ${y1}
+        `)
     }
 
     makeBorderGradient() {

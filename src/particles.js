@@ -2,24 +2,22 @@ import Particle from './particle';
 
 export default class Particles {
     particles = [];
-    totalCount = 20;
+    totalCount = 30;
     currentPick = [];
 
-    constructor() {
+    constructor($path, opts) {
+        this.$path = $path;
+        this.totalLen = this.$path.getTotalLength();
+        this.opts = {...opts};
+
         this.init();
     }
 
     init(){
-        this.defineDOM();
         this.createParticles();
         this.animateParticles();
     }
 
-    defineDOM() {
-        this.$el = document.querySelector('.svg');
-        this.$path = this.$el.querySelector('path');
-        this.totalLen = this.$path.getTotalLength();
-    }
 
     pickRandom() {
         let count = 5;
@@ -41,7 +39,7 @@ export default class Particles {
 
         setTimeout(() => {
             window.requestAnimationFrame(this.animateParticles.bind(this))
-        }, 3000)
+        }, 1500)
     }
 
     createParticles() {
@@ -51,10 +49,10 @@ export default class Particles {
                 new Particle({
                     id: count,
                     $path: this.$path,
-                    $svg: this.$el,
                     totalLen: this.totalLen,
                     speed: Math.random(),
-                    currentPoint: Math.random() * this.totalLen
+                    currentPoint: Math.random() * this.totalLen,
+                    particleTransform: this.opts.particleTransform
                 }),
             );
             count -= 1;

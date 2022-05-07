@@ -1,6 +1,7 @@
 {
   "name": "hades-boons-menu",
   "dependencies": {
+    "animejs": "^3.2.1",
     "parcel": "^2.2.1"
   },
   "scripts": {

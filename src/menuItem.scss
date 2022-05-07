@@ -35,6 +35,7 @@ $bgGradientHover: (
   --z-shine: 1;
   --z-content: 2;
   --z-glare: 3;
+  --z-svg-border: 4;
   --font-family: 'Alegreya Sans';
   --title-font-family: 'Alegreya Sans Light';
   --accent-font-family: 'Alegreya Sans ExtraBold';
@@ -57,7 +58,7 @@ $bgGradientHover: (
     }
 
     .menu-item--shine {
-      animation: shineOn .4s ease-in-out;
+      animation: shineOn .3s ease-in-out;
     }
 
     .menu-item--glare {
@@ -73,7 +74,8 @@ $bgGradientHover: (
   --offset: calc((
   var(--line-width) +
   (var(--blur-size) * 2) +
-  var(--border-offset)
+  var(--border-offset) +
+  var(--particles-max-radius) / 2
   ) * -1);
 
   display: block;
@@ -81,6 +83,7 @@ $bgGradientHover: (
   left: var(--offset);
   top: var(--offset);
   pointer-events: none;
+  z-index: var(--z-svg-border);
 
   path {
     fill: none;
@@ -191,7 +194,7 @@ $bgGradientHover: (
 
 .menu-item--shine {
   position: absolute;
-  background: #fff400;
+  background: gold;
   border-radius: 20px;
   left: -5px;
   top: -5px;

@@ -2,10 +2,6 @@ import anime from 'animejs';
 
 const ns = 'http://www.w3.org/2000/svg';
 
-const random255 = () => {
-    return Math.round(Math.random() * 255);
-}
-
 export default class Particle {
     animationTarget = {
         pointAtLen: 0,
@@ -15,7 +11,7 @@ export default class Particle {
     id;
 
     constructor(opts) {
-        this.$svg = opts.$svg;
+        this.$svg = opts.$path.closest('svg');
         this.opts = {...opts};
         this.id = opts.id;
         this.init();
@@ -34,7 +30,8 @@ export default class Particle {
     }
 
     setPosition({x, y}){
-        this.$group.setAttribute('transform', `translate(${x} ${y})`)
+        const {particleTransform} = this.opts;
+        this.$group.setAttribute('transform', `translate(${x + particleTransform} ${y + particleTransform})`)
     }
 
     move(){
@@ -42,13 +39,14 @@ export default class Particle {
             targets: this.animationTarget,
             pointAtLen: this.opts.totalLen,
             loop: true,
-            duration: 40000,
+            duration: 50000,
             easing: 'linear',
             update: () => {
                 const point = (this.opts.currentPoint + this.animationTarget.pointAtLen) % this.opts.totalLen;
                 this.setPosition(this.getPosition(point))
                 this.$group.setAttribute('opacity', this.animationTarget.opacity)
                 this.$circle1.setAttribute('transform', `scale(${this.animationTarget.scale})`);
+                this.$circle2.setAttribute('transform', `scale(${this.animationTarget.scale})`);
             }
         })
     }
@@ -57,7 +55,7 @@ export default class Particle {
         this.isAnimated = true;
         this.animationVisual = anime({
             targets: this.animationTarget,
-            duration: 4000,
+            duration: 2000,
             easing: 'easeInOutCubic',
             opacity: 1,
             scale: 1,
@@ -71,11 +69,15 @@ export default class Particle {
     createElement(){
         this.$group = document.createElementNS(ns, 'g');
         this.$circle1 = document.createElementNS(ns, 'circle');
+        this.$circle2 = document.createElementNS(ns, 'circle');
 
-        this.$circle1.setAttribute('r', '8px');
-        this.$circle1.setAttribute('fill', `rgb(${random255()}, ${random255()}, ${random255()})`);
+        this.$circle1.setAttribute('r', '3px');
+        this.$circle1.setAttribute('fill', `rgba(255, 255, 255, .4)`);
+        this.$circle2.setAttribute('r', '6px');
+        this.$circle2.setAttribute('fill', `rgba(255, 255, 255, .4)`);
 
         this.$group.appendChild(this.$circle1);
+        this.$group.appendChild(this.$circle2);
         this.$svg.appendChild(this.$group);
     }
 }
