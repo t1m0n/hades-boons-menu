@@ -1,8 +1,11 @@
 import Particle from './particle';
+import {BORDER_COLORS} from "./consts";
+
+const particleColors = [...BORDER_COLORS.top.map(({color}) => color), '#fff'];
 
 export default class Particles {
     particles = [];
-    currentPick = [];
+    currentIdPick = [];
     totalCount = 20;
     pickRandomInterval = 1000;
     particleAnimationDuration = 1500;
@@ -18,36 +21,38 @@ export default class Particles {
 
     init(){
         this.createParticles();
-        // this.animateParticles();
     }
-
 
     pickRandom() {
         let count = 5;
         while(count) {
-            this.currentPick.push(Math.round(Math.random() * this.totalCount))
+            this.currentIdPick.push(Math.round(Math.random() * this.totalCount))
             count -= 1;
         }
     }
 
-    moveParticles() {
+    startAnimation = () => {
         clearTimeout(this.stopTimeoutId);
 
         this.particles.forEach(p => p.move());
         this.animateParticles();
     }
 
-    stopParticles() {
+    stopAnimation = () => {
         clearTimeout(this.circleAnimationTimeoutId);
+        clearTimeout(this.stopTimeoutId);
+
+        // Stop animation with delay. Allow particles to disappear
         this.stopTimeoutId = setTimeout(() => {
             this.particles.forEach(p => p.stop());
         }, this.pickRandomInterval + this.particleAnimationDuration)
     }
 
     animateParticles() {
-        this.currentPick = [];
+        this.currentIdPick = [];
         this.pickRandom();
-        this.currentPick.forEach(id => {
+
+        this.currentIdPick.forEach(id => {
             const particle = this.particles.find(p => p.id === id);
 
             if (particle && !particle.isAnimated) {
@@ -56,19 +61,21 @@ export default class Particles {
         })
 
         this.circleAnimationTimeoutId = setTimeout(() => {
-            this.circleAnimationRaf = window.requestAnimationFrame(this.animateParticles.bind(this))
+            window.requestAnimationFrame(this.animateParticles.bind(this))
         }, this.pickRandomInterval)
     }
 
     createParticles() {
         let count = this.totalCount;
         while(count) {
+            const randomColorIndex = Math.floor(Math.random() * particleColors.length);
+            const shouldBeColored = Math.random() < .4;
             this.particles.push(
                 new Particle({
                     id: count,
                     $path: this.$path,
+                    color: particleColors[randomColorIndex],
                     totalLen: this.totalLen,
-                    speed: Math.random(),
                     currentPoint: Math.random() * this.totalLen,
                     particleTransform: this.opts.particleTransform,
                     animationDuration: this.particleAnimationDuration,
