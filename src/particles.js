@@ -2,8 +2,11 @@ import Particle from './particle';
 
 export default class Particles {
     particles = [];
-    totalCount = 30;
     currentPick = [];
+    totalCount = 20;
+    pickRandomInterval = 1000;
+    particleAnimationDuration = 1500;
+
 
     constructor($path, opts) {
         this.$path = $path;
@@ -15,7 +18,7 @@ export default class Particles {
 
     init(){
         this.createParticles();
-        this.animateParticles();
+        // this.animateParticles();
     }
 
 
@@ -27,7 +30,22 @@ export default class Particles {
         }
     }
 
+    moveParticles() {
+        clearTimeout(this.stopTimeoutId);
+
+        this.particles.forEach(p => p.move());
+        this.animateParticles();
+    }
+
+    stopParticles() {
+        clearTimeout(this.circleAnimationTimeoutId);
+        this.stopTimeoutId = setTimeout(() => {
+            this.particles.forEach(p => p.stop());
+        }, this.pickRandomInterval + this.particleAnimationDuration)
+    }
+
     animateParticles() {
+        this.currentPick = [];
         this.pickRandom();
         this.currentPick.forEach(id => {
             const particle = this.particles.find(p => p.id === id);
@@ -37,9 +55,9 @@ export default class Particles {
             }
         })
 
-        setTimeout(() => {
-            window.requestAnimationFrame(this.animateParticles.bind(this))
-        }, 1500)
+        this.circleAnimationTimeoutId = setTimeout(() => {
+            this.circleAnimationRaf = window.requestAnimationFrame(this.animateParticles.bind(this))
+        }, this.pickRandomInterval)
     }
 
     createParticles() {
@@ -52,7 +70,8 @@ export default class Particles {
                     totalLen: this.totalLen,
                     speed: Math.random(),
                     currentPoint: Math.random() * this.totalLen,
-                    particleTransform: this.opts.particleTransform
+                    particleTransform: this.opts.particleTransform,
+                    animationDuration: this.particleAnimationDuration,
                 }),
             );
             count -= 1;

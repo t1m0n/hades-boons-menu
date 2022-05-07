@@ -65,8 +65,17 @@ class MenuItem {
         this.drawBorder();
         this.render();
 
-        new Particles(this.$particlesPath, {
+        this.particles = new Particles(this.$particlesPath, {
             particleTransform: this.borderTransform
+        })
+
+        this.$el.addEventListener('mouseenter', () => {
+            this.particles.moveParticles();
+            // this.particles.animateParticles();
+        })
+        this.$el.addEventListener('mouseleave', () => {
+            this.particles.stopParticles();
+            // this.particles.animateParticles();
         })
     }
 
@@ -95,6 +104,7 @@ class MenuItem {
         bg.classList.add('menu-item--bg');
         shine.classList.add('menu-item--shine');
         glare.classList.add('menu-item--glare');
+        $particlesPath.classList.add('menu-item--border-particles-path');
 
         this.$el.appendChild(svg);
         svg.appendChild(gradientDefs);
@@ -173,6 +183,7 @@ class MenuItem {
 
         borders.forEach(border => {
             border.setAttribute('filter', 'url(#border-blur)')
+            border.classList.add('menu-item--border-path')
             border.setAttribute('transform', `translate(${this.borderTransform}, ${this.borderTransform})`)
         })
 

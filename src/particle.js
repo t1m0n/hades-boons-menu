@@ -6,7 +6,7 @@ export default class Particle {
     animationTarget = {
         pointAtLen: 0,
         opacity: 0,
-        scale: 0.5
+        scale: 0
     }
     id;
 
@@ -20,7 +20,7 @@ export default class Particle {
     init() {
         this.createElement();
         this.setPosition(this.getPosition(this.opts.currentPoint));
-        this.move();
+        // this.move();
     }
 
     getPosition(point){
@@ -35,11 +35,15 @@ export default class Particle {
     }
 
     move(){
+        if (this.animationMovement) {
+            this.animationMovement.play();
+            return;
+        }
         this.animationMovement = anime({
             targets: this.animationTarget,
             pointAtLen: this.opts.totalLen,
             loop: true,
-            duration: 50000,
+            duration: 120000,
             easing: 'linear',
             update: () => {
                 const point = (this.opts.currentPoint + this.animationTarget.pointAtLen) % this.opts.totalLen;
@@ -51,17 +55,25 @@ export default class Particle {
         })
     }
 
+    stop() {
+        this.animationMovement.pause();
+    }
+
     animateParticle() {
+        console.log('animate');
         this.isAnimated = true;
         this.animationVisual = anime({
             targets: this.animationTarget,
-            duration: 2000,
+            duration: this.opts.animationDuration,
             easing: 'easeInOutCubic',
             opacity: 1,
             scale: 1,
             direction: 'alternate',
             complete: () => {
                 this.isAnimated = false;
+            },
+            update: () => {
+
             }
         })
     }
@@ -70,6 +82,7 @@ export default class Particle {
         this.$group = document.createElementNS(ns, 'g');
         this.$circle1 = document.createElementNS(ns, 'circle');
         this.$circle2 = document.createElementNS(ns, 'circle');
+        this.$group.classList.add('menu-item--circle-group');
 
         this.$circle1.setAttribute('r', '3px');
         this.$circle1.setAttribute('fill', `rgba(255, 255, 255, .4)`);
@@ -78,6 +91,7 @@ export default class Particle {
 
         this.$group.appendChild(this.$circle1);
         this.$group.appendChild(this.$circle2);
+        this.$group.setAttribute('opacity', 0);
         this.$svg.appendChild(this.$group);
     }
 }
