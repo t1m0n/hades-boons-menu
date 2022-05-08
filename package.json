@@ -8,7 +8,6 @@
     "dev": "parcel src/index.html"
   },
   "devDependencies": {
-    "@parcel/transformer-pug": "^2.2.1",
     "@parcel/transformer-sass": "^2.2.1"
   }
 }
