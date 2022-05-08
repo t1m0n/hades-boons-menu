@@ -3,6 +3,7 @@ import './menu.scss';
 
 import MenuItem from './menuItem';
 import {BOONS} from "./consts";
+import anime from "animejs";
 
 class BoonsMenu {
     items = [];
@@ -17,7 +18,19 @@ class BoonsMenu {
         this.addItems();
         this.activateDemoItem();
 
+        setTimeout(this.animate, 200);
+
         this.$el.addEventListener('mouseenter', this.deactivateDemoItem)
+    }
+
+    animate = () => {
+        anime({
+            targets: [this.items.map(item => item.$el)],
+            opacity: [0, 1],
+            scale: [.98, 1],
+            easing: 'easeInOutCubic',
+            delay: anime.stagger(100, {from: 'center'}),
+        })
     }
 
     addItems() {

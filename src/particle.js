@@ -85,7 +85,6 @@ export default class Particle {
         this.$group = document.createElementNS(NS, 'g');
         this.$circle1 = document.createElementNS(NS, 'circle');
         this.$circle2 = document.createElementNS(NS, 'circle');
-        this.$group.classList.add('menu-item--circle-group');
 
         this.$circle1.setAttribute('r', '3px');
         this.$circle1.setAttribute('fill', '#fff');

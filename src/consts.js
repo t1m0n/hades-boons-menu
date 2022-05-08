@@ -40,26 +40,49 @@ export const BORDER_COLORS = {
     ]
 }
 
+export const BORDER_GRADIENT_IDS = {
+    top: 'borderTopGradient',
+    right: 'borderRightGradient',
+    bottom: 'borderBottomGradient',
+    left: 'borderLeftGradient',
+}
+
 export const BOONS = [
     {
         title: 'Divine Dash',
         img: dash,
         description: 'Your <strong>Dash</strong>  deals damage and can <strong>Deflect</strong>.',
-        bonus: 'Dash Damage',
-        bonusAmount: '10'
+        bonuses: [
+            {
+                label: 'Dash Damage',
+                value: '10'
+            }
+        ],
     },
     {
         title: 'Divine Flourish',
         img: flourish,
         description: 'Your <strong>Special</strong> is stronger, and can <strong>Deflect</strong>.',
-        bonus: 'Special Damage',
-        bonusAmount: '+60%'
+        bonuses: [
+            {
+                label: 'Special Damage',
+                value: '+60%'
+            }
+        ],
     },
     {
         title: 'Athena\'s Aid',
         img: athenasAid,
         description: 'Your <strong>Call</strong> briefly makes you  <strong>Invulnerable</strong> and  <strong>Deflect</strong> all attacks.',
-        bonus: 'Special Damage',
-        bonusAmount: '+60%'
+        bonuses: [
+            {
+                label: 'Effect Duration',
+                value: '1.5 Sec.'
+            },
+            {
+                label: 'Max Gauge Bonus',
+                value: 'x6 Duration'
+            }
+        ],
     }
 ]

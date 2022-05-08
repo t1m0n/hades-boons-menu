@@ -1,5 +1,5 @@
 import Particles from './particles';
-import {BORDER_COLORS, NS} from "./consts";
+import {BORDER_COLORS, BORDER_GRADIENT_IDS, NS} from "./consts";
 
 const defaults = {
     lineWidth: 3,
@@ -128,32 +128,33 @@ class MenuItem {
             M ${offset},${y1}
             L ${offsetX2},${y1}
         `)
-        $topBorder.setAttribute('stroke', 'url(#borderTopGradient)')
+        $topBorder.setAttribute('stroke', `url(#${BORDER_GRADIENT_IDS.top})`)
 
         // Right border
         $rightBorder.setAttribute('d', `
             M ${offsetX2}, ${y1}
             Q ${x2} ${y1} ${x2} ${offset} L ${x2},${offsetY2} Q ${x2} ${y2} ${offsetX2} ${y2}
         `)
-        $rightBorder.setAttribute('stroke', 'url(#borderRightGradient)')
+        $rightBorder.setAttribute('stroke', `url(#${BORDER_GRADIENT_IDS.right})`)
 
         // Left border
         $leftBorder.setAttribute('d', `
             M ${offset}, ${y1}
             Q ${x1} ${y1} ${x1} ${offset} L ${x1},${offsetY2} Q ${x1} ${y2} ${offset} ${y2}
         `)
-        $leftBorder.setAttribute('stroke', 'url(#borderLeftGradient)')
+        $leftBorder.setAttribute('stroke', `url(#${BORDER_GRADIENT_IDS.left})`)
 
         // Bottom border
         $bottomBorder.setAttribute('d', `
             M ${offset},${y2}
             L ${offsetX2},${y2}
         `)
-        $bottomBorder.setAttribute('stroke', 'url(#borderBottomGradient)')
+        $bottomBorder.setAttribute('stroke', `url(#${BORDER_GRADIENT_IDS.bottom})`)
 
         borders.forEach($border => {
-            $border.setAttribute('filter', 'url(#border-blur)')
             $border.classList.add('menu-item--border-path')
+
+            $border.setAttribute('filter', 'url(#border-blur)')
             $border.setAttribute('transform', `translate(${this.borderTransform}, ${this.borderTransform})`)
         })
 
@@ -168,20 +169,20 @@ class MenuItem {
     makeBorderGradient() {
         this.gradientDefs.appendChild(this.createGradient({
             colors: BORDER_COLORS.top,
-            id :'borderTopGradient'
+            id: BORDER_GRADIENT_IDS.top
         }));
         this.gradientDefs.appendChild(this.createGradient({
             colors: BORDER_COLORS.right,
-            id:'borderRightGradient',
+            id: BORDER_GRADIENT_IDS.right,
             isVertical: true
         }));
         this.gradientDefs.appendChild(this.createGradient({
             colors: BORDER_COLORS.bottom,
-            id :'borderBottomGradient'
+            id: BORDER_GRADIENT_IDS.bottom
         }));
         this.gradientDefs.appendChild(this.createGradient({
             colors: BORDER_COLORS.left,
-            id:'borderLeftGradient',
+            id: BORDER_GRADIENT_IDS.left,
             isVertical: true
         }));
     }
@@ -237,7 +238,16 @@ class MenuItem {
     }
 
     render() {
-        const {content: {title, img, bonus, bonusAmount, description}} = this.opts;
+        const {content: {title, img, bonuses, description}} = this.opts;
+
+        const bonusesHtml = bonuses.map(({label ,value}) => {
+            return `
+            <div class="menu-item--bonus">
+                <span class="menu-item--bonus-name">${label}:</span>
+                <span class="menu-item--bonus-amount">${value}</span>
+            </div>
+            `
+        }).join('')
 
         this.$content.innerHTML = `
             <div class="menu-item--img">
@@ -250,10 +260,7 @@ class MenuItem {
                 <div class="menu-item--description">
                     ${description}
                 </div>
-                <div class="menu-item--bonus">
-                    <span class="menu-item--bonus-name">${bonus}:</span>
-                    <span class="menu-item--bonus-amount">${bonusAmount}</span>
-                </div>
+                ${bonusesHtml}
             </div>
         `
     }
